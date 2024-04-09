@@ -230,3 +230,4 @@ C:\Users\chebe\source\repos\JoseSieiro-Chatbox-CalES\JoseSieiro-Chatbox-CalES\bi
 C:\Users\chebe\source\repos\JoseSieiro-Chatbox-CalES\JoseSieiro-Chatbox-CalES\bin\Debug\net8.0\runtimes\win\lib\net7.0\System.Security.Cryptography.ProtectedData.dll
 C:\Users\chebe\source\repos\JoseSieiro-Chatbox-CalES\JoseSieiro-Chatbox-CalES\bin\Debug\net8.0\runtimes\win\lib\net7.0\System.Windows.Extensions.dll
 C:\Users\chebe\source\repos\JoseSieiro-Chatbox-CalES\JoseSieiro-Chatbox-CalES\bin\Debug\net8.0\bundleconfig.json
+C:\Users\chebe\source\repos\JoseSieiro-Chatbox-CalES\JoseSieiro-Chatbox-CalES\obj\Debug\net8.0\JoseSieiro-Chatbox-CalES.sourcelink.json

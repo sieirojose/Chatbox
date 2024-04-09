@@ -16,32 +16,38 @@ namespace JoseSieiro_Chatbox_CalES.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
-        {
+		public IActionResult Index()
+		{
+			int? userId = HttpContext.Session.GetInt32("UserId");
 
-            // Obtain the ID of the user of the HTTP session
-            int? userId = HttpContext.Session.GetInt32("UserId");
+			if (userId == null)
+			{
+				return RedirectToAction("Login", "Account");
+			}
 
-            if (userId == null)
-            {
-                //if the user is not present in the session, redirect him to the login view
-                return RedirectToAction("Login", "Account");
-            }
-
-            var comments = _context.Comments
+			var user = _context.Users.FirstOrDefault(u => u.Id == userId);
+			var comments = _context.Comments
 				.Where(comment => comment.UserId == userId)
 				.Include(comment => comment.Replies)
-                    .ThenInclude(reply => reply.User)
-                .Include(comment => comment.User)
-                .OrderByDescending(comment => comment.CreatedOn)
-                .ToList();
+					.ThenInclude(reply => reply.User)
+				.Include(comment => comment.User)
+				.OrderByDescending(comment => comment.CreatedOn)
+				.ToList();
+
+			var commentVm = new CommentVM
+			{
+				Comments = comments,
+				FullName = user.FullName,
+				Username = user.Username,
+				Email = user.Email
+			};
+
+			return View(commentVm);
+		}
 
 
-            return View(comments);
-        }
-
-        //Post: ChatRoom/PostReply
-        [HttpPost]
+		//Post: ChatRoom/PostReply
+		[HttpPost]
         public async Task<IActionResult> PostReply(ReplyVM replyvm)
         {
 
@@ -120,15 +126,20 @@ namespace JoseSieiro_Chatbox_CalES.Controllers
 	            .ToListAsync();
 
 			var filteredComments = comments
-			.Where(comment => (comment.Text == null && filter.Length == 0) || 
-                            (filter == null || 
-                            (comment.Text != null && filter.All(word => comment.Text.Contains(word, StringComparison.OrdinalIgnoreCase)))))
-                            .OrderByDescending(comment => comment.CreatedOn)
-                            .ToList();
+		.Where(comment => string.IsNullOrEmpty(filter) ||
+			(comment.Text != null && comment.Text.ToLower().Contains(filter.ToLower())))
+		.OrderByDescending(comment => comment.CreatedOn)
+		.ToList();
+
+			// Crear una instancia de CommentVM y asignar los comentarios filtrados
+			var commentVm = new CommentVM
+			{
+				Comments = filteredComments,
+				// Asigna otras propiedades necesarias de CommentVM aquí
+			};
 
 
-
-			return PartialView("_Comments", filteredComments);
+			return PartialView("_Comments", commentVm);
 		}
 
 

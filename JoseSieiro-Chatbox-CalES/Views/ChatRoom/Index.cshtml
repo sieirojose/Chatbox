@@ -1,4 +1,5 @@
-﻿@model IEnumerable<JoseSieiro_Chatbox_CalES.Models.Comment>
+﻿@* @model IEnumerable<JoseSieiro_Chatbox_CalES.Models.Comment> *@
+@model JoseSieiro_Chatbox_CalES.ViewModels.CommentVM
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 
 @{
@@ -6,137 +7,162 @@
     Layout = "~/Views/Shared/_UserLayout.cshtml";
 }
 
-<h1 class="text-success" text-center>Welcome</h1>
+<h1 class="text-center"><strong>Welcome to the chat</strong></h1>
 
 
 
 	<div class="row">
-		<div class="col-6">
-
-			@{
-				string userImageUrl = HttpContextAccessor.HttpContext.Session.GetString("UserImageUrl");
-			}
-
-			@if (userImageUrl.Length > 0)
-			{
-				<img src="@Url.Content(userImageUrl)" alt="No Image" class="circular-image-user" />
-			}
-			else
-			{
-				<img src="@Url.Content("/images/default.jpg")" alt="No Image" class="circular-image-user" />
-			}
-
-			<form asp-action="PostComment" asp-controller="ChatRoom" method="post">
-
-				<input class="pull-right" type="text" name="CommentText" style="width:100% " placeholder="Type new comment" />
-
-				<br />
-
-				<input class="btn btn-success" type="submit" value="Post Comment" class="btn btn-success" />
-
-			</form>
-		</div>
-		<div class="col-6">
-		<form id="searchComments">
-			<!-- SearchComments -->
-			<div class="row">
-
-				<div class="col-12">
+		<div class="col-12">
+			<div class="card" style="background-color: #333;">
+				<div class="card-body">
+					@{
+						string userImageUrl = HttpContextAccessor.HttpContext.Session.GetString("UserImageUrl");
+					}
 					<div class="row">
-
-						<div class="col-12">
-							<div class="box box-info  box-solid ">
-								<div class="box-header with-border text-center">
-									<h3 class="box-title"><strong>Filter Comments</strong></h3>
-									<div class="box-tools pull-right">
-										<button type="button" class="btn btn-box-tool" data-widget="collapse">
-											<i class="fa fa-plus"></i>
-										</button>
-									</div>
-								</div>
-								<div class="box-body">
-									<div class="row">
-										<div class="col-4">
-
-											<!-- filtroAnotacion -->
-											<div class="row">
-												<div class="col-12">
-													<div class="form-group">
-
-														<!-- Encabezado del campo -->
-														<label class="control-label TextUpper" style="height:18px">Texto a buscar</label>
-														<!-- / Encabezado del campo -->
-
-														<div class="input-group">
-
-															<!-- Ícono del campo -->
-															<div class="input-group-addon">
-																<i class="fa fa-filter"></i>
-															</div>
-															<!-- / Ícono del campo -->
-															<!-- Campo -->
-															<input id="filter" class="form-control form-control-sm" data-val="true" data-val-required="Por favor, llene el campo." />
-															<!-- / Campo -->
-
-														</div>
-													</div>
-												</div>
-											</div>
-											<!-- / filtroAnotacion -->
-										</div>
-
-
-
-
-
-
-
-									</div>
-
-									<!-- Button -->
-									<div class="row">
-										<div class="col-12 text-center">
-
-											<button id="btnBuscar" title="Search Comments" class="btn btn-primary " type="submit">
-												Search
-											</button>
-
-										</div>
-									</div>
-									<!-- / Button -->
-
+						<div class="col-2">
+							@if (userImageUrl.Length > 0)
+							{
+								<img src="@Url.Content(userImageUrl)" alt="No Image" class="circular-image-user" />
+							}
+							else
+							{
+								<img src="@Url.Content("/images/default.jpg")" alt="No Image" class="circular-image-user" />
+							}
+						</div>
+						<div class="col-8">
+							
+							<div class="row">
+								<div class="col-12">
+									<h4  style="color: #FFFFFF;">
+										<strong>
+											<span>Name: </span>@Html.DisplayFor(model => model.FullName)
+										</strong>
+									</h4>
+									
 								</div>
 							</div>
+							<div class="row">
+								<div class="col-12">
+
+									<h4 style="color: #FFFFFF;">
+										<strong>
+											<span>User: </span>@Html.DisplayFor(model => model.Username)
+										</strong>
+									</h4>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-12">
+									<h4   style="color: #FFFFFF;">
+										<strong>
+											<span>Email: </span>@Html.DisplayFor(model => model.Email)
+										</strong>
+									</h4>
+									
+								</div>
+							</div>
+
+
 						</div>
 					</div>
 
+					<br />
+					<form asp-action="PostComment" asp-controller="ChatRoom" method="post">
 
+						<input class="pull-right" type="text" name="CommentText" style="width:100% " placeholder="Type new comment" />
+
+						<br />
+						<br />
+
+						<input class="btn btn-success" type="submit" value="Post Comment" class="btn btn-success" />
+
+					</form>
 				</div>
-
 			</div>
-			<!-- SearchComments -->
 
-
-
-
-		</form>
 		</div>
+
+
 	</div>
 
 
 
 
 <div class="row">
-	<div class="col-10 offset-2">
+	<div class="col-12">
+		<div class="card" style="background-color: #333;">
+			<div class="card-body">
+		
 		<table class="table" id="commentTable">
+			<thead>
+				<div class="row">
+					<div class="col-8">
 
+					</div>
+					<div class="col-4">
+
+						
+						<input type="text" id="filter" class="form-control form-control-sm" placeholder="Filter Comments" />
+						
+
+					</div>
+				</div>
+				<br />
+			</thead>
 			<tbody>
-				@Html.Partial("_Comments", Model)
-			</tbody>
-		</table>
 
+
+						@Html.Partial("_Comments", Model)
+					
+
+			</tbody>
+			
+		</table>
+			</div>
+		</div>
     </div>
 </div>
+
+
+<div class="row">
+
+	<div class="card">
+		<div class="card-header">
+			<h3 class="card-title">DataTable with default features</h3>
+		</div>
+		<!-- /.card-header -->
+		<div class="card-body">
+			<table id="dataTable1" class="table table-bordered table-striped">
+				<thead>
+					<tr>
+						<th>
+							Header
+						</th>
+
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>
+							Body
+						</td>
+
+					</tr>
+
+				</tbody>
+
+			</table>
+		</div>
+		<!-- /.card-body -->
+	</div>
+
+</div>
+
+
+
+
+
+
 
 
 @section Scripts {
@@ -192,10 +218,6 @@
 						console.log("Error: " + error);
 						console.log(xhr.responseText);
 
-						// Ocultar mensaje de carga en caso de error
-						$("#loadingMessage").text("Error en la búsqueda").css("color", "red");
-						//ocultar spinner
-						$("#searchSpinner").hide();
 					}
 				});
 				/////////////////////////////////////////////////////////////////////////////////////////
