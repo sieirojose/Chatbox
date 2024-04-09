@@ -305,12 +305,28 @@
       "PackagePath": "staticwebassets\\images\\123.jpeg"
     },
     {
+      "Id": "C:\\Users\\chebe\\source\\repos\\JoseSieiro-Chatbox-CalES\\JoseSieiro-Chatbox-CalES\\wwwroot\\images\\124.jpg",
+      "PackagePath": "staticwebassets\\images\\124.jpg"
+    },
+    {
+      "Id": "C:\\Users\\chebe\\source\\repos\\JoseSieiro-Chatbox-CalES\\JoseSieiro-Chatbox-CalES\\wwwroot\\images\\125.jpeg",
+      "PackagePath": "staticwebassets\\images\\125.jpeg"
+    },
+    {
       "Id": "C:\\Users\\chebe\\source\\repos\\JoseSieiro-Chatbox-CalES\\JoseSieiro-Chatbox-CalES\\wwwroot\\images\\14.jpeg",
       "PackagePath": "staticwebassets\\images\\14.jpeg"
     },
     {
+      "Id": "C:\\Users\\chebe\\source\\repos\\JoseSieiro-Chatbox-CalES\\JoseSieiro-Chatbox-CalES\\wwwroot\\images\\14.jpg",
+      "PackagePath": "staticwebassets\\images\\14.jpg"
+    },
+    {
       "Id": "C:\\Users\\chebe\\source\\repos\\JoseSieiro-Chatbox-CalES\\JoseSieiro-Chatbox-CalES\\wwwroot\\images\\15.jpg",
       "PackagePath": "staticwebassets\\images\\15.jpg"
+    },
+    {
+      "Id": "C:\\Users\\chebe\\source\\repos\\JoseSieiro-Chatbox-CalES\\JoseSieiro-Chatbox-CalES\\wwwroot\\images\\24.jpeg",
+      "PackagePath": "staticwebassets\\images\\24.jpeg"
     },
     {
       "Id": "C:\\Users\\chebe\\source\\repos\\JoseSieiro-Chatbox-CalES\\JoseSieiro-Chatbox-CalES\\wwwroot\\images\\9.jpg",
@@ -815,6 +831,22 @@
     {
       "Id": "C:\\Users\\chebe\\source\\repos\\JoseSieiro-Chatbox-CalES\\JoseSieiro-Chatbox-CalES\\wwwroot\\plugins\\pdfmake\\vfs_fonts.js",
       "PackagePath": "staticwebassets\\plugins\\pdfmake\\vfs_fonts.js"
+    },
+    {
+      "Id": "C:\\Users\\chebe\\source\\repos\\JoseSieiro-Chatbox-CalES\\JoseSieiro-Chatbox-CalES\\wwwroot\\uploads\\01db0f66-0675-4892-80b6-d7d0d7c27982_peter.jpg",
+      "PackagePath": "staticwebassets\\uploads\\01db0f66-0675-4892-80b6-d7d0d7c27982_peter.jpg"
+    },
+    {
+      "Id": "C:\\Users\\chebe\\source\\repos\\JoseSieiro-Chatbox-CalES\\JoseSieiro-Chatbox-CalES\\wwwroot\\uploads\\64099a8e-03d6-4182-831a-5b6be93bfdbc_bekito.jpeg",
+      "PackagePath": "staticwebassets\\uploads\\64099a8e-03d6-4182-831a-5b6be93bfdbc_bekito.jpeg"
+    },
+    {
+      "Id": "C:\\Users\\chebe\\source\\repos\\JoseSieiro-Chatbox-CalES\\JoseSieiro-Chatbox-CalES\\wwwroot\\uploads\\6931c742-f7fd-405a-8660-c795c6cc429b_leo.jpeg",
+      "PackagePath": "staticwebassets\\uploads\\6931c742-f7fd-405a-8660-c795c6cc429b_leo.jpeg"
+    },
+    {
+      "Id": "C:\\Users\\chebe\\source\\repos\\JoseSieiro-Chatbox-CalES\\JoseSieiro-Chatbox-CalES\\wwwroot\\uploads\\b47a3e47-4dac-4d61-af4c-7575da148ee4_leo.jpeg",
+      "PackagePath": "staticwebassets\\uploads\\b47a3e47-4dac-4d61-af4c-7575da148ee4_leo.jpeg"
     },
     {
       "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.JoseSieiro-Chatbox-CalES.Microsoft.AspNetCore.StaticWebAssets.props",

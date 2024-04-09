@@ -25,7 +25,7 @@
 
 									}
 								</span>
-
+								<br />
 								<span style="margin-right:15px; font-size:16px; color:#FFFFFF">
 									<strong>
 									@comment.User.Username
@@ -38,6 +38,18 @@
 								</span>
 
 							</div>
+						</div>
+						<div class="row">
+							
+								@if (!string.IsNullOrEmpty(comment.AttachedDocument))
+								{
+									<div class="col-2">
+										<br>
+										<a href="@comment.AttachedDocument" class="btn btn-primary" download>Download Attachment</a>
+									</div>
+									
+								}
+
 						</div>
 
 						
@@ -89,6 +101,7 @@
 										}
 
 										
+
 										<br />
 										<form asp-action="PostReply" asp-controller="ChatRoom" method="post">
 

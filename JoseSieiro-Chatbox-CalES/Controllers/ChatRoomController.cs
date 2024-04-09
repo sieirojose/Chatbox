@@ -3,6 +3,7 @@ using JoseSieiro_Chatbox_CalES.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.Hosting.Internal;
 using System.Collections.Generic;
 
 namespace JoseSieiro_Chatbox_CalES.Controllers
@@ -10,11 +11,13 @@ namespace JoseSieiro_Chatbox_CalES.Controllers
     public class ChatRoomController : Controller
     {
         private readonly ApplicationDbContext _context;
-        // Constructor to initialize ApplicationDbContext
-        public ChatRoomController(ApplicationDbContext context)
-        {
+		private readonly IWebHostEnvironment _hostingEnvironment;
+		// Constructor to initialize ApplicationDbContext
+		public ChatRoomController(IWebHostEnvironment hostingEnvironment, ApplicationDbContext context)
+		{
             _context = context;
-        }
+			_hostingEnvironment = hostingEnvironment;
+		}
 
 		public IActionResult Index()
 		{
@@ -27,7 +30,6 @@ namespace JoseSieiro_Chatbox_CalES.Controllers
 
 			var user = _context.Users.FirstOrDefault(u => u.Id == userId);
 			var comments = _context.Comments
-				.Where(comment => comment.UserId == userId)
 				.Include(comment => comment.Replies)
 					.ThenInclude(reply => reply.User)
 				.Include(comment => comment.User)
@@ -77,7 +79,7 @@ namespace JoseSieiro_Chatbox_CalES.Controllers
 
         //Post: ChatRoom/PostComment
         [HttpPost]
-        public async Task<IActionResult> PostComment(string CommentText)
+        public async Task<IActionResult> PostComment(string CommentText, IFormFile attachedDocument)
         {
 
             // Obtain the ID of the user of the HTTP session
@@ -96,7 +98,23 @@ namespace JoseSieiro_Chatbox_CalES.Controllers
                 UserId = (int)userId
             };
 
-            _context.Comments.Add(comment);
+			if (attachedDocument != null && attachedDocument.Length > 0)
+			{
+
+				var uploadsFolder = Path.Combine(_hostingEnvironment.WebRootPath, "uploads");
+				var uniqueFileName = Guid.NewGuid().ToString() + "_" + attachedDocument.FileName;
+				var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+				using (var fileStream = new FileStream(filePath, FileMode.Create))
+				{
+					await attachedDocument.CopyToAsync(fileStream);
+				}
+
+
+				comment.AttachedDocument = "/uploads/" + uniqueFileName;
+			}
+
+
+			_context.Comments.Add(comment);
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Index");
@@ -118,7 +136,6 @@ namespace JoseSieiro_Chatbox_CalES.Controllers
 			}
 
 			var comments = await _context.Comments
-	            .Where(comment => comment.UserId == userId)
 				.Include(comment => comment.Replies)
 					.ThenInclude(reply => reply.User)
 				.Include(comment => comment.User)
@@ -126,16 +143,16 @@ namespace JoseSieiro_Chatbox_CalES.Controllers
 	            .ToListAsync();
 
 			var filteredComments = comments
-		.Where(comment => string.IsNullOrEmpty(filter) ||
-			(comment.Text != null && comment.Text.ToLower().Contains(filter.ToLower())))
-		.OrderByDescending(comment => comment.CreatedOn)
-		.ToList();
+				.Where(comment => string.IsNullOrEmpty(filter) ||
+					(comment.Text != null && comment.Text.ToLower().Contains(filter.ToLower())))
+				.OrderByDescending(comment => comment.CreatedOn)
+				.ToList();
 
-			// Crear una instancia de CommentVM y asignar los comentarios filtrados
+
 			var commentVm = new CommentVM
 			{
 				Comments = filteredComments,
-				// Asigna otras propiedades necesarias de CommentVM aquí
+
 			};
 
 
@@ -144,20 +161,7 @@ namespace JoseSieiro_Chatbox_CalES.Controllers
 
 
 
-		////Get: /
-		//[HttpGet]
-		//public IActionResult Register()
-		//{
-		//    return View();
-		//}
 
-
-		////Post: /
-		//[HttpPost]
-		//public async Task<IActionResult> Register(RegisterVM register)
-		//{
-
-		//}
 
 	}
 }
