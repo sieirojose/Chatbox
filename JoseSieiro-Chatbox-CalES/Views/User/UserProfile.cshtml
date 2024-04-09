@@ -1,0 +1,69 @@
+﻿@model JoseSieiro_Chatbox_CalES.Models.User
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewData["Title"] = "UserProfile";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<h1 class="text-center">My Profile</h1>
+
+<div class="well">
+
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Username)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Username)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.FullName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.FullName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CreatedOn)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CreatedOn)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ImageUrl)
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.ImageUrl.Length >0)
+            {
+
+                //
+
+                <img src="@Url.Content(HttpContextAccessor.HttpContext.Session.GetString("UserImageUrl"))" alt="No Image" style="height:200px;border-radius: 50%;" />
+                //
+
+            }
+            <br />
+            <br />
+
+            <form asp-action="UpdatePicture" asp-controller="User" method="post" enctype="multipart/form-data">
+
+                <input type="file" name="Picture" class="col-sm-2 form-control" />
+
+                <br />
+
+
+                <input type="submit" value="Save Image" class="btn btn-primary" />
+
+            </form>
+
+        </dd>
+    </dl>
+</div>
+

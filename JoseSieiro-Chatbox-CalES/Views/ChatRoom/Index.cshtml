@@ -1,0 +1,208 @@
+﻿@model IEnumerable<JoseSieiro_Chatbox_CalES.Models.Comment>
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<h1 class="text-success" text-center>Welcome</h1>
+
+
+
+	<div class="row">
+		<div class="col-6">
+
+			@{
+				string userImageUrl = HttpContextAccessor.HttpContext.Session.GetString("UserImageUrl");
+			}
+
+			@if (userImageUrl.Length > 0)
+			{
+				<img src="@Url.Content(userImageUrl)" alt="No Image" class="circular-image-user" />
+			}
+			else
+			{
+				<img src="@Url.Content("/images/default.jpg")" alt="No Image" class="circular-image-user" />
+			}
+
+			<form asp-action="PostComment" asp-controller="ChatRoom" method="post">
+
+				<input class="pull-right" type="text" name="CommentText" style="width:100% " placeholder="Type new comment" />
+
+				<br />
+
+				<input class="btn btn-success" type="submit" value="Post Comment" class="btn btn-success" />
+
+			</form>
+		</div>
+		<div class="col-6">
+		<form id="searchComments">
+			<!-- SearchComments -->
+			<div class="row">
+
+				<div class="col-12">
+					<div class="row">
+
+						<div class="col-12">
+							<div class="box box-info  box-solid ">
+								<div class="box-header with-border text-center">
+									<h3 class="box-title"><strong>Filter Comments</strong></h3>
+									<div class="box-tools pull-right">
+										<button type="button" class="btn btn-box-tool" data-widget="collapse">
+											<i class="fa fa-plus"></i>
+										</button>
+									</div>
+								</div>
+								<div class="box-body">
+									<div class="row">
+										<div class="col-4">
+
+											<!-- filtroAnotacion -->
+											<div class="row">
+												<div class="col-12">
+													<div class="form-group">
+
+														<!-- Encabezado del campo -->
+														<label class="control-label TextUpper" style="height:18px">Texto a buscar</label>
+														<!-- / Encabezado del campo -->
+
+														<div class="input-group">
+
+															<!-- Ícono del campo -->
+															<div class="input-group-addon">
+																<i class="fa fa-filter"></i>
+															</div>
+															<!-- / Ícono del campo -->
+															<!-- Campo -->
+															<input id="filter" class="form-control form-control-sm" data-val="true" data-val-required="Por favor, llene el campo." />
+															<!-- / Campo -->
+
+														</div>
+													</div>
+												</div>
+											</div>
+											<!-- / filtroAnotacion -->
+										</div>
+
+
+
+
+
+
+
+									</div>
+
+									<!-- Button -->
+									<div class="row">
+										<div class="col-12 text-center">
+
+											<button id="btnBuscar" title="Search Comments" class="btn btn-primary " type="submit">
+												Search
+											</button>
+
+										</div>
+									</div>
+									<!-- / Button -->
+
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+				</div>
+
+			</div>
+			<!-- SearchComments -->
+
+
+
+
+		</form>
+		</div>
+	</div>
+
+
+
+
+<div class="row">
+	<div class="col-10 offset-2">
+		<table class="table" id="commentTable">
+
+			<tbody>
+				@Html.Partial("_Comments", Model)
+			</tbody>
+		</table>
+
+    </div>
+</div>
+
+
+@section Scripts {
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+
+	<script>
+		$(document).ready(function () {
+
+			// $("#searchComments").submit(function (e) {
+			// 	e.preventDefault(); 
+
+			// 	var filter = $("#filter").val();
+
+
+			// 	SearchComments(filter);
+
+			// });
+
+			$('#filter').on('keyup', function (event) {
+
+				var filter = $("#filter").val();
+
+				SearchComments(filter);
+
+			});
+
+
+			function SearchComments(filter) {
+
+				$.ajax({
+					type: "POST",
+					url: "/ChatRoom/SearchComments",
+					data: {
+						filter: filter,
+
+					},
+					success: function (result) {
+
+
+
+
+						$('#commentTable tbody').html(result);
+
+
+
+					},
+					error: function (xhr, status, error) {
+						// Mostrar detalles del error en la consola
+						console.error("Error en la solicitud AJAX");
+						console.log("Status: " + status);
+						console.log("Error: " + error);
+						console.log(xhr.responseText);
+
+						// Ocultar mensaje de carga en caso de error
+						$("#loadingMessage").text("Error en la búsqueda").css("color", "red");
+						//ocultar spinner
+						$("#searchSpinner").hide();
+					}
+				});
+				/////////////////////////////////////////////////////////////////////////////////////////
+			}
+
+
+
+		});
+	</script>
+}

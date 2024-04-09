@@ -1,0 +1,105 @@
+﻿@model IEnumerable<JoseSieiro_Chatbox_CalES.Models.Comment>
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@if (Model != null)
+{
+	@foreach (var comment in Model)
+	{
+		<tr>
+			<td>
+				<div class="row">
+					<div class="col-2">
+						<span>
+							@if (comment.User.ImageUrl.Length > 0)
+							{
+								<img src="@Url.Content(comment.User.ImageUrl)" alt="No Image" class="circular-image-comment" />
+							}
+							else
+							{
+								<img src="@Url.Content("/images/default.jpg")" alt="No Image" class="circular-image-comment" />
+
+							}
+						</span>
+						<br />
+						<span style="margin-right:15px; font-size:16px; color:green">
+							@comment.User.Username
+						</span>
+					</div>
+					<div class="col-10">
+						<br />
+						<span style="font-size:20px">
+							@Html.DisplayFor(modelItem => comment.Text)
+						</span>
+
+					</div>
+				</div>
+
+
+
+
+				<div class="row">
+					<div class="col-10 offset-2">
+						@foreach (var reply in comment.Replies)
+						{
+							<div class="row">
+								<div class="col-2">
+									<span>
+										@if (reply.User.ImageUrl.Length > 0)
+										{
+											<img src="@Url.Content(reply.User.ImageUrl)" alt="No Image" class="circular-image-reply" />
+										}
+										else
+										{
+											<img src="@Url.Content("/images/default.jpg")" alt="No Image" class="circular-image-reply" />
+
+										}
+									</span>
+
+									<span style="margin-right:15px; font-size:16px; color:grey">
+										@if (reply.User != null && !string.IsNullOrEmpty(comment.User.Username))
+										{
+											@reply.User.Username
+										}
+										else
+										{
+											// Manejar el caso en que el nombre de usuario es nulo o vacío
+											<text>No Username</text>
+										}
+									</span>
+								</div>
+								<div class="col-10">
+									<span style="margin-left:10px; font-size:20px; color:darkblue">
+										@reply.Text
+									</span>
+								</div>
+							</div>
+							<br />
+
+
+
+
+						}
+
+						<br />
+						<form asp-action="PostReply" asp-controller="ChatRoom" method="post">
+
+							<input type="text" name="Reply" style="width:100% " placeholder="Type reply" />
+
+							<br />
+
+							<input type="hidden" name="CommentId" value="@comment.Id" />
+
+							<input type="submit" value="Post Reply" class="btn btn-info" />
+
+						</form>
+
+					</div>
+				</div>
+
+
+
+
+			</td>
+
+		</tr>
+	}
+}
