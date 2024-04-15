@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("JoseSieiro-Chatbox-CalES")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ff984fa1ce2ee6164e3f7c1136c3f4b3279b25c2")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d60d5e70bfaee1d71916a98d6dd2093d3e717bca")]
 [assembly: System.Reflection.AssemblyProductAttribute("JoseSieiro-Chatbox-CalES")]
 [assembly: System.Reflection.AssemblyTitleAttribute("JoseSieiro-Chatbox-CalES")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

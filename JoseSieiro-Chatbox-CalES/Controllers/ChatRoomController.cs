@@ -21,6 +21,7 @@ namespace JoseSieiro_Chatbox_CalES.Controllers
 
 		public IActionResult Index()
 		{
+			//if user is nos tigned in, redirect him to the login page
 			int? userId = HttpContext.Session.GetInt32("UserId");
 
 			if (userId == null)
@@ -91,6 +92,7 @@ namespace JoseSieiro_Chatbox_CalES.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
+			//adding comment info to the database
             var comment = new Comment
             {
                 Text = CommentText,
@@ -98,9 +100,14 @@ namespace JoseSieiro_Chatbox_CalES.Controllers
                 UserId = (int)userId
             };
 
+			//if there is an attached document on the posting of the comment
 			if (attachedDocument != null && attachedDocument.Length > 0)
 			{
-
+				//getting the folder path
+				//then creating an unique filename
+				//then creating the full path where the attached document is going to be stored
+				//adding the document to the project
+				//and adding the path to the database 
 				var uploadsFolder = Path.Combine(_hostingEnvironment.WebRootPath, "uploads");
 				var uniqueFileName = Guid.NewGuid().ToString() + "_" + attachedDocument.FileName;
 				var filePath = Path.Combine(uploadsFolder, uniqueFileName);
@@ -109,7 +116,7 @@ namespace JoseSieiro_Chatbox_CalES.Controllers
 					await attachedDocument.CopyToAsync(fileStream);
 				}
 
-
+				//adding the path of the uploaded document to the database
 				comment.AttachedDocument = "/uploads/" + uniqueFileName;
 			}
 
@@ -135,6 +142,7 @@ namespace JoseSieiro_Chatbox_CalES.Controllers
 				return RedirectToAction("Login", "Account");
 			}
 
+			//first we get the comments
 			var comments = await _context.Comments
 				.Include(comment => comment.Replies)
 					.ThenInclude(reply => reply.User)
@@ -142,17 +150,16 @@ namespace JoseSieiro_Chatbox_CalES.Controllers
 				.OrderByDescending(comment => comment.CreatedOn)
 	            .ToListAsync();
 
+			//then the comments are filtered by the text the user has written
 			var filteredComments = comments
 				.Where(comment => string.IsNullOrEmpty(filter) ||
 					(comment.Text != null && comment.Text.ToLower().Contains(filter.ToLower())))
 				.OrderByDescending(comment => comment.CreatedOn)
 				.ToList();
 
-
 			var commentVm = new CommentVM
 			{
 				Comments = filteredComments,
-
 			};
 
 

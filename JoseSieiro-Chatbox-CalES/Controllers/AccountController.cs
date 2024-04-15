@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using JoseSieiro_Chatbox_CalES.ViewModels;
 using JoseSieiro_Chatbox_CalES.Models;
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using System.Security.Cryptography;
+using Konscious.Security.Cryptography;
 using System.Diagnostics;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace JoseSieiro_Chatbox_CalES.Controllers
 {
@@ -70,10 +71,8 @@ namespace JoseSieiro_Chatbox_CalES.Controllers
             var file = registervm.ImageUrl;
 
 
-            Debug.WriteLine("userId: " + userId);
-            Debug.WriteLine("file: " + file);
-
-
+            //getting the extension, combining with the userid and generating the filepath
+            //then insert the path to the database
             var extension = Path.GetExtension(file.FileName);
             string idAndExtension = "1" + userId + extension;
             string imageUrl = "/images/" + idAndExtension;
@@ -83,12 +82,13 @@ namespace JoseSieiro_Chatbox_CalES.Controllers
             await _context.SaveChangesAsync();
 
 
-
+            //getting the path of the folder images in wwwroot
             var path = Path.Combine(_hostingEnvironment.WebRootPath, "images");
 
             // create the complete route of the path
             string filePath = Path.Combine(path, idAndExtension);
-               
+            
+            //if user had already an image, delete the one he had
             if (System.IO.File.Exists(filePath))
             {
                 System.IO.File.Delete(filePath);
@@ -96,7 +96,7 @@ namespace JoseSieiro_Chatbox_CalES.Controllers
 
             //file.SaveAs((path + idAndExtension));
 
-            // Save the file
+            // Save the image
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await file.CopyToAsync(stream);
@@ -109,23 +109,32 @@ namespace JoseSieiro_Chatbox_CalES.Controllers
 
 		private string HashPassword(string password)
 		{
-			// Generate a 128-bit salt using a secure PRNG
-			byte[] salt = new byte[128 / 8];
+			// Generate the salt
+			byte[] salt = new byte[16];
 			using (var rng = RandomNumberGenerator.Create())
 			{
 				rng.GetBytes(salt);
 			}
 
-			// Derive a 256-bit subkey (use HMACSHA1 with 10000 iterations)
-			string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-				password: password,
-				salt: salt,
-				prf: KeyDerivationPrf.HMACSHA1,
-				iterationCount: 10000,
-				numBytesRequested: 256 / 8));
+			// Configure Argon2 object
+			var argon2 = new Argon2id(Encoding.UTF8.GetBytes(password))
+			{
+				Salt = salt, // Sal generated
+				DegreeOfParallelism = 8, // Number of threads to paralelize
+				MemorySize = 8192, // size of the memory in KiB
+				Iterations = 4 // Number of iterations
+			};
 
-			// Concatenate the salt and the hash
-			return $"{Convert.ToBase64String(salt)}:{hashed}";
+			// Calculate the hash
+			var hash = argon2.GetBytes(32); // Length of the hash in bytes
+
+			// Concatenate the hash and the salt
+			byte[] hashWithSalt = new byte[salt.Length + hash.Length];
+			Array.Copy(salt, 0, hashWithSalt, 0, salt.Length);
+			Array.Copy(hash, 0, hashWithSalt, salt.Length, hash.Length);
+
+			// Convert to Base64 to store in the database
+			return Convert.ToBase64String(hashWithSalt);
 		}
 
 		//Get: Account/Login
@@ -159,20 +168,29 @@ namespace JoseSieiro_Chatbox_CalES.Controllers
 
 		private bool VerifyPassword(string enteredPassword, string storedPasswordHash)
 		{
-			// Split the stored password hash into its components (salt and hash)
-			string[] hashParts = storedPasswordHash.Split(':');
-			byte[] salt = Convert.FromBase64String(hashParts[0]);
-			string storedHash = hashParts[1];
+			// Convertir la cadena Base64 del hash almacenado en un arreglo de bytes
+			byte[] hashWithSalt = Convert.FromBase64String(storedPasswordHash);
 
-			// Compute the hash of the entered password using the same salt and compare it with the stored hash
-			string hashedEnteredPassword = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-				password: enteredPassword,
-				salt: salt,
-				prf: KeyDerivationPrf.HMACSHA1,
-				iterationCount: 10000,
-				numBytesRequested: 256 / 8));
+			// Obtener la sal y el hash almacenados del hash combinado
+			byte[] salt = new byte[16]; // La sal tiene una longitud de 16 bytes
+			byte[] storedHash = new byte[hashWithSalt.Length - salt.Length];
+			Array.Copy(hashWithSalt, 0, salt, 0, salt.Length);
+			Array.Copy(hashWithSalt, salt.Length, storedHash, 0, storedHash.Length);
 
-			return storedHash == hashedEnteredPassword;
+			// Configurar el objeto Argon2 con la misma sal y parámetros utilizados para hashear la contraseña original
+			var argon2 = new Argon2id(Encoding.UTF8.GetBytes(enteredPassword))
+			{
+				Salt = salt,
+				DegreeOfParallelism = 8,
+				MemorySize = 8192,
+				Iterations = 4
+			};
+
+			// Calcular el hash del password entrado
+			var enteredPasswordHash = argon2.GetBytes(32); // Longitud del hash en bytes
+
+			// Comparar el hash calculado del password entrado con el hash almacenado
+			return enteredPasswordHash.SequenceEqual(storedHash);
 		}
 
 		//Get: Account/Logout

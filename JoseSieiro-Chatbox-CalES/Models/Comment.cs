@@ -17,10 +17,12 @@ namespace JoseSieiro_Chatbox_CalES.Models
 
         public int UserId { get; set; }
 
-        [ForeignKey("UserId")]
+		public string? AttachedDocument { get; set; }
+
+		[ForeignKey("UserId")]
         public virtual User User { get; set; }
 
-		public string? AttachedDocument { get; set; }
+		
 
 		public ICollection<Reply> Replies { get; set; }
 
